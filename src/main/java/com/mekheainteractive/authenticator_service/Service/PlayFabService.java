@@ -1,11 +1,13 @@
 package com.mekheainteractive.authenticator_service.Service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.util.Map;
 
+@Service
 public class PlayFabService {
 
     @Value("${playfab.title-id}")

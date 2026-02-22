@@ -1,4 +1,4 @@
-package com.mekheainteractive.authenticator_service;
+package com.mekheainteractive.authenticator_service.Controller;
 
 import com.mekheainteractive.authenticator_service.Service.JwtService;
 import com.mekheainteractive.authenticator_service.Service.PlayFabService;
