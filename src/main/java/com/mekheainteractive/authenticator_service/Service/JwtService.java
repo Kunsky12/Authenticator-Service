@@ -20,45 +20,10 @@ public class JwtService {
     private String SECRET_KEY;
 
     // Generate a JWT token for a PlayFabId
-    public String generateToken(String playfabId) {
+    public String generateToken(String sessionTicket) {
         return Jwts
                 .builder()
-                .subject(playfabId)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 43200000)) // 12h
-                .signWith(getSignInKey(), Jwts.SIG.HS256)
-                .compact();
-    }
-
-    // Extract the PlayFabId from a JWT token
-    public String extractPlayfabId(String token) {
-        return Jwts.parser()
-                .verifyWith(getSignInKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
-    }
-
-    // Validate JWT token
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .verifyWith(getSignInKey())
-                    .build()
-                    .parseSignedClaims(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    // Generate a JWT token for a PlayFabId
-    public String generateServiceToken() {
-        return Jwts
-                .builder()
-                .subject("notification-service")
-                .claim("role", "service")
+                .subject(sessionTicket)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 43200000)) // 12h
                 .signWith(getSignInKey(), Jwts.SIG.HS256)

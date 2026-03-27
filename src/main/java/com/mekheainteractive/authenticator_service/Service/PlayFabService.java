@@ -2,8 +2,8 @@ package com.mekheainteractive.authenticator_service.Service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Map;
 
@@ -16,23 +16,25 @@ public class PlayFabService {
     @Value("${playfab.secret-key}")
     private String secretKey;
 
-    private RestClient restClient() {
-        return RestClient.builder()
+    private WebClient webClient() {
+        return WebClient.builder()
                 .baseUrl("https://" + titleId + ".playfabapi.com/Server")
                 .defaultHeader("X-SecretKey", secretKey)
                 .build();
     }
+
     // Verify PlayFab session ticket
     public String verifySessionTicket(String sessionTicket) {
         try {
-            Map<String, Object> body = Map.of("SessionTicket", sessionTicket);
+            Map<String, Object> requestBody = Map.of("SessionTicket", sessionTicket);
 
-            Map response = restClient()
+            Map response = webClient()
                     .post()
                     .uri("/AuthenticateSessionTicket")
-                    .body(body)
+                    .bodyValue(requestBody)
                     .retrieve()
-                    .body(Map.class);
+                    .bodyToMono(Map.class)
+                    .block(); // blocking call for simplicity; you can also make it async
 
             if (response == null) {
                 System.err.println("PlayFab response is null");
@@ -40,18 +42,23 @@ public class PlayFabService {
             }
 
             Map<String, Object> data = (Map<String, Object>) response.get("data");
-            Map<String, Object> userInfo = (Map<String, Object>) data.get("UserInfo");
+            if (data == null) {
+                System.err.println("PlayFab response missing 'data'");
+                return null;
+            }
 
+            Map<String, Object> userInfo = (Map<String, Object>) data.get("UserInfo");
             if (userInfo == null) {
                 System.err.println("PlayFab UserInfo is null");
                 return null;
             }
 
             String playFabId = (String) userInfo.get("PlayFabId");
-            System.out.println("Extracted PlayFabId " + playFabId);
+            System.out.println("Extracted PlayFabId: " + playFabId);
             return playFabId;
 
-        } catch (RestClientResponseException ex) {
+        } catch (WebClientResponseException ex) {
+            // This gives the raw response from PlayFab (could be JSON or HTML error page)
             System.err.println("PlayFab verify session error: " + ex.getResponseBodyAsString());
             return null;
         } catch (Exception e) {
@@ -59,5 +66,4 @@ public class PlayFabService {
             return null;
         }
     }
-
 }
