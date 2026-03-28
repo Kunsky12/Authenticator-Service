@@ -28,7 +28,7 @@ Game Client  ←  { JWT }
 
 1. The client sends a PlayFab `SessionTicket` obtained after login on the client SDK
 2. The service verifies it against the PlayFab Server API using your Title's secret key
-3. On success, a signed JWT is returned — this token is then used to authenticate against other services (e.g. ChatSystem)
+3. On success, a signed JWT is returned — this token is then used to authenticate against other services (e.g. Websocket Service, Match History Service and Transaction Service)
 
 ---
 
@@ -135,7 +135,7 @@ A raw JWT string. The token's `sub` claim contains the player's `PlayFabId` and 
 | `exp` | Issued-at + 12 hours |
 | Algorithm | HS256 |
 
-Tokens issued by this service are consumed by other backend services (e.g. ChatSystem's WebSocket `auth` handshake).
+Tokens issued by this service are consumed by other backend services (e.g. WebSocket `auth` handshake).
 
 ---
 
