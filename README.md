@@ -160,11 +160,6 @@ playfab.secret-key=${PLAYFAB_SECRET_KEY}
 # JWT
 JwtSecretKey=${JWT_SECRET_KEY}
 
-# JPA / Hibernate
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.show-sql=true
-
 # Server
 server.port=8080
 ```
